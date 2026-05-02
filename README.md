@@ -1,30 +1,29 @@
 # Commit Generator — IntelliJ Plugin
 
-An IntelliJ IDEA plugin that generates conventional git commit messages from your staged diff using AI.
-Supports **Gemini** (cloud) and **Ollama** (local/private).
+An IntelliJ IDEA plugin that generates conventional git commit messages from your staged diff using a local **Ollama** model — no API key, no cloud, fully private.
 
 ## Features
 
 - Reads `git diff --staged` and produces a single-line commit message in `type(scope): description` format
 - Supports Conventional Commits types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`
-- Two provider options: Gemini API or any local Ollama model
-- API key stored securely in the OS credential store (Keychain / libsecret / Windows Credential Manager) — never written to disk in plain text
+- Works with any locally running Ollama model (llama3, mistral, codellama, etc.)
 - One-click copy to clipboard
 
 ## Requirements
 
 - IntelliJ IDEA 2025.2+
 - Java 21
-- For Gemini: a [Google AI Studio](https://aistudio.google.com) API key
-- For Ollama: a running [Ollama](https://ollama.com) instance
+- A running [Ollama](https://ollama.com) instance
 
 ## Setup
 
-1. Open **Settings → Tools → Commit Generator**
-2. Choose a provider:
-   - **Gemini** — paste your API key, select a model (`gemini-2.0-flash` recommended)
-   - **Ollama** — set the base URL (default: `http://localhost:11434`) and model name
-3. Click **OK**
+1. Install and start Ollama, then pull a model:
+   ```bash
+   ollama pull llama3.2
+   ```
+2. Open **Settings → Tools → Commit Generator**
+3. Set the Ollama URL (default: `http://localhost:11434`) and model name
+4. Click **OK**
 
 ## Usage
 
@@ -37,14 +36,13 @@ Supports **Gemini** (cloud) and **Ollama** (local/private).
 
 ```
 src/main/java/com/danish/commitgenerator/
-├── AppSettingsComponent.java       Settings UI form
-├── AppSettingsConfigurable.java    Settings page registration
-├── AppSettingsState.java           Persistent settings + PasswordSafe integration
-├── CommitGeneratorPanel.java       Tool window UI
+├── AppSettingsComponent.java           Settings UI form
+├── AppSettingsConfigurable.java        Settings page registration
+├── AppSettingsState.java               Persistent settings (URL, model)
+├── CommitGeneratorPanel.java           Tool window UI
 ├── CommitGeneratorToolWindowFactory.java
-├── GeminiApiService.java           Gemini REST client
-├── GitDiffService.java             Runs git diff --staged
-└── OllamaApiService.java           Ollama REST client
+├── GitDiffService.java                 Runs git diff --staged
+└── OllamaApiService.java               Ollama REST client
 ```
 
 ## Building

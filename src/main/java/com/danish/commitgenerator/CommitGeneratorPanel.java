@@ -71,36 +71,19 @@ public class CommitGeneratorPanel {
         statusLabel.setForeground(Color.GRAY);
         messageArea.setText("");
 
-        LOG.info("Generate triggered for project: " + project.getName());
-
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
             try {
-                LOG.info("Fetching staged diff…");
                 String diff = GitDiffService.getStagedDiff(project);
 
                 if (diff.isBlank()) {
-                    LOG.warn("No staged changes found");
                     setStatus("No staged changes found. Stage some files first.", true);
                     return;
                 }
-                LOG.info("Diff fetched, length=" + diff.length() + " chars");
 
                 AppSettingsState settings = AppSettingsState.getInstance();
-                boolean useOllama = "ollama".equals(settings.provider);
+                setStatus("Calling Ollama (" + settings.ollamaModel + ")…", false);
 
-                if (useOllama) {
-                    LOG.info("Using Ollama: url=" + settings.ollamaUrl + ", model=" + settings.ollamaModel);
-                    setStatus("Calling Ollama (" + settings.ollamaModel + ")…", false);
-                } else {
-                    LOG.info("Using Gemini: model=" + settings.model);
-                    setStatus("Calling Gemini (" + settings.model + ")…", false);
-                }
-
-                String message = useOllama
-                        ? new OllamaApiService().generateCommitMessage(diff)
-                        : new GeminiApiService().generateCommitMessage(diff);
-
-                LOG.info("Response received, message length=" + message.length() + " chars");
+                String message = new OllamaApiService().generateCommitMessage(diff);
 
                 ApplicationManager.getApplication().invokeLater(() -> {
                     messageArea.setText(message);
