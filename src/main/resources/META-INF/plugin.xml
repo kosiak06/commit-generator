@@ -1,0 +1,37 @@
+<!-- Plugin Configuration File: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <id>com.danish.commit-generator</id>
+    <name>Commit Generator</name>
+    <vendor>Bohdan Danish</vendor>
+
+    <description><![CDATA[
+        Generate conventional git commit messages instantly using AI — supports both <b>Gemini</b> (cloud) and <b>Ollama</b> (local, private).<br/><br/>
+        <b>Features:</b>
+        <ul>
+            <li>Reads your staged diff and produces a single-line <code>type(scope): description</code> commit message</li>
+            <li>Gemini: gemini-2.0-flash, gemini-1.5-flash, gemini-1.5-pro</li>
+            <li>Ollama: any locally running model (llama3, mistral, codellama, etc.)</li>
+            <li>API key stored securely in the system credential store — never written to disk in plain text</li>
+            <li>One-click copy to clipboard</li>
+        </ul>
+        <b>Usage:</b> Stage your files, open the <b>Commit Generator</b> tool window, and click <b>Generate</b>.<br/>
+        Configure your provider and credentials in <b>Settings → Tools → Commit Generator</b>.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="Commit Generator"
+                    factoryClass="com.danish.commitgenerator.CommitGeneratorToolWindowFactory"
+                    anchor="right"
+                    icon="AllIcons.Actions.Commit"/>
+
+        <applicationService serviceImplementation="com.danish.commitgenerator.AppSettingsState"/>
+
+        <applicationConfigurable
+                parentId="tools"
+                instance="com.danish.commitgenerator.AppSettingsConfigurable"
+                id="com.danish.commitgenerator.AppSettingsConfigurable"
+                displayName="Commit Generator"/>
+    </extensions>
+</idea-plugin>
